@@ -58,6 +58,9 @@ async def check_updates_periodically():
                         points = int(fixed[3]) if fixed[3] else 0
                         list_of_students.append(
                             f'Новый merge-request!\n{fixed[0]} с баллами {points}\nСсылка:{fixed[2]}')
+                    elif student and student.points != int(fixed[3]):
+                        student.points = int(fixed[3])
+                        db.commit()
                     elif student is None:
                         points = int(fixed[3]) if fixed[3] else 0
                         db.add(Table(student=fixed[0], group=fixed[1], merge_request=fixed[2], points=points))
@@ -73,7 +76,7 @@ async def check_updates_periodically():
             await bot.send_message(chat_id=ADMIN_ID, text=message)
 
         logging.info("Проверка обновлений завершена")
-        await asyncio.sleep(30)
+        await asyncio.sleep(600)
 
 
 @dp.message(Command("start"))
